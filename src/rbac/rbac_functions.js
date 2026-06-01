@@ -1,34 +1,43 @@
-import { Permissions, Roles, sequelize } from "../db/database.js";
+import { Roles } from "../db/database.js";
+import { HttpStatusMap } from "../http_status_map.js";
 import { rolesPermissions } from "./roles_permissions.config.js";
 
 export const rbacFunctions = {
-  validateRole: async (role, targetPermission) => {
-    if (
-      role != rolesPermissions.admin.role &&
-      role != rolesPermissions.editor.role &&
-      role != rolesPermissions.reader.role
-    ) {
-      return {
-        success: false,
-        message: "Role não identificado",
-      };
+  validateRole: (targetPermission) => {
+
+    return async (req, res, next) => {
+
+      try {
+
+        const { userRoleId } = req
+
+        const role = await Roles.findOne({where: {id: userRoleId}})
+
+        if (
+          role.name != rolesPermissions.admin.role &&
+          role.name != rolesPermissions.editor.role &&
+          role.name != rolesPermissions.reader.role
+        ) {
+          return res.status(HttpStatusMap.UNAUTHORIZED.sc).json({ type: HttpStatusMap.UNAUTHORIZED.type, message: HttpStatusMap.UNAUTHORIZED.message })
+
+        }
+
+        const roleObj = await Roles.findOne({ where: { name: role.name } });
+        const permissionArr = await roleObj.getAssociatedPermissions({
+          where: { name: targetPermission },
+        });
+
+        if (permissionArr.length <= 0) {
+          return res.status(HttpStatusMap.UNAUTHORIZED.sc).json({ type: HttpStatusMap.UNAUTHORIZED.type, message: 'Você não tem o nível de autorização necessário para executar isso' })
+        } else {
+          next()
+        }
+      }
+      catch (e) {
+        return res.status(HttpStatusMap.INTERNAL_SERVER_ERROR.sc).json({ type: HttpStatusMap.INTERNAL_SERVER_ERROR.type, message: e.message })
+      }
     }
 
-    const roleObj = await Roles.findOne({ where: { name: role } });
-    const permissionArr = await roleObj.getAssociatedPermissions({
-      where: { name: targetPermission },
-    });
 
-    if (permissionArr.length <= 0) {
-      return {
-        success: false,
-        message: "Permissão não concedida",
-      };
-    } else {
-      return {
-        success: true,
-        message: "Permissão concedida",
-      };
-    }
   },
 };

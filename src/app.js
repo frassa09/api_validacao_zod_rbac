@@ -4,6 +4,7 @@ import { configCors } from "./middlewares/cors.config.js";
 import { configHelmet } from "./middlewares/helmet.config.js";
 import { sequelize } from "./db/database.js";
 import { seedDatabase } from "./db/database_initialization.js";
+import { usersRoutes } from "./routes/usersRoutes.js";
 
 const app = express();
 const port = process.env.API_PORT;
@@ -16,7 +17,9 @@ app.use(express.json());
 app.use(configCors);
 app.use(configHelmet);
 
-sequelize.sync({ alter: true, force: true }).then(() => {
+app.use('/users', usersRoutes)
+
+sequelize.sync({ alter: true }).then(() => {
   seedDatabase().then(() => {
     app.listen(port, () =>
       console.log(`Servidor rodando em http://localhost:${port}`),

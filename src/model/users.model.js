@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 
+
 export const initUsers = (sequelize) => {
   return sequelize.define(
     "Users",
@@ -14,10 +15,14 @@ export const initUsers = (sequelize) => {
         allowNull: false,
         validate: { isEmail: true },
       },
-      passwordHash: {
+      password_hash: {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      role_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      }
     },
     { tableName: "users", timestamps: true },
   );

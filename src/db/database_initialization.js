@@ -11,7 +11,7 @@ export const seedDatabase = async () => {
         {
           name: rolesPermissions.admin.role,
           description: rolesPermissions.admin.description,
-          Permissions: [
+          associatedPermissions: [
             {
               name: rolesPermissions.admin.permissions.articles.create.name,
               description:
@@ -57,7 +57,7 @@ export const seedDatabase = async () => {
         {
           name: rolesPermissions.editor.role,
           description: rolesPermissions.editor.description,
-          Permissions: [
+          associatedPermissions: [
             {
               name: rolesPermissions.editor.permissions.articles.create.name,
               description:
@@ -83,7 +83,7 @@ export const seedDatabase = async () => {
         {
           name: rolesPermissions.reader.role,
           description: rolesPermissions.reader.description,
-          Permissions: [
+          associatedPermissions: [
             {
               name: rolesPermissions.reader.permissions.articles.read.name,
               description:
@@ -92,7 +92,7 @@ export const seedDatabase = async () => {
           ],
         },
       ],
-      { include: [Permissions] },
+      { include: [{model: Permissions, as: 'associatedPermissions'}] },
     );
   }
 };
