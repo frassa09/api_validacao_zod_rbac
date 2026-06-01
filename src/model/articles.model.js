@@ -1,18 +1,22 @@
 import { DataTypes, Op } from "sequelize";
-import { sequelize } from "../db/database";
 
-
-export const Articles = sequelize.define('Articles', {
-    title: {
+export const initArticles = (sequelize) => {
+  return sequelize.define(
+    "Articles",
+    {
+      title: {
         type: DataTypes.STRING,
-        allowNull: false
-    },
-    content: {
+        allowNull: false,
+      },
+      content: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
+      },
+      status: {
+        type: DataTypes.ENUM("published", "draft"),
+        allowNull: false,
+      },
     },
-    status: {
-        type: DataTypes.ENUM('published', 'draft'),
-        allowNull: false
-    }
-}, {tableName: 'articles', timestamps: true})
+    { tableName: "articles", timestamps: true },
+  );
+};

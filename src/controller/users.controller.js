@@ -1,5 +1,5 @@
-import { HttpStatusMap } from "../http_status_map"
-import { userSchema } from "../schemas/users.schema"
+import { HttpStatusMap } from "../http_status_map.js"
+import { userSchema } from "../schemas/users.schema.js"
 import bcrypt from 'bcryptjs'
 
 
